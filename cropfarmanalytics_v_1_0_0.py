@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 
 # Load crop data from CSV file
-crop_data = pd.read_csv('cropdata.csv')
+csv_url= "https://raw.githubusercontent.com/ElectronicsDr/StreamlitApps/main/crop_data.csv"
+crop_data = pd.read_csv(csv_url)
 
 # Set up sidebar for selecting crop
 crop = st.sidebar.selectbox('Select a crop', crop_data['crop'].unique())
