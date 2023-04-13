@@ -31,13 +31,13 @@ fert_samples = np.random.normal(fert_mean, fert_std, size=n_samples)
 # Display histogram of yield and fertilizer values
 fig, ax = plt.subplots()
 ax.hist(yield_samples)
-ax.set_xlabel('Yield')
+ax.set_xlabel('Crop Selected Yields')
 ax.set_ylabel('Frequency')
 st.pyplot(fig)
 
 fig, ax = plt.subplots()
 ax.hist(fert_samples)
-ax.set_xlabel('Fertilizer')
+ax.set_xlabel('Fertilizer Usage')
 ax.set_ylabel('Frequency')
 st.pyplot(fig)
 
