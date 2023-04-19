@@ -33,3 +33,6 @@ labor_cost = np.random.normal(loc=5, scale=1, size=farm_size)  # assume labor co
 gross_margin = crop_value - water_cost - labor_cost
 gross_margin_data = pd.DataFrame({'Crop': range(1, farm_size+1), 'Gross Margin': gross_margin})
 gross_margin_data.to_csv('gross_margin.csv', index=False)
+
+#In this example code, we use NumPy to generate sample data for each of the five metrics (crop yield, water use efficiency, water productivity, irrigation efficiency, and gross margin) based on a farm size of 1000 acres. The generated data is stored in individual CSV files.
+#Note that this is just an example code, and you would need to adjust the parameters (such as mean and standard deviation) and assumptions (such as crop value and water cost) to match your specific farm and irrigation management practices.
