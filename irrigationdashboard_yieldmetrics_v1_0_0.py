@@ -1,49 +1,40 @@
-import streamlit as st
 import numpy as np
-import pandas as pd
+import streamlit as st
 
-# Set up the app title and sidebar options
-st.set_page_config(page_title='Data Manipulation App', layout='wide')
-st.sidebar.title('Options')
-st.sidebar.markdown('Select your data parameters:')
+# Objective: Display these Metrics from the inputs of the Irrigation Intervals and Gross Irrigation Depth
+#  Irrigation metrics:
+# - Crop yield per acre
+# - Water use efficiency (WUE)
+# - Water productivity (WP)
+# - Irrigation efficiency
+# - Gross margin
+# The irrigation input values are the irrigation intervals and irrigation application depth.
 
-# Set up the data generation parameters
-num_rows = st.sidebar.slider('Number of Rows', min_value=100, max_value=1000, step=100, value=500)
-num_cols = st.sidebar.slider('Number of Columns', min_value=2, max_value=10, step=1, value=5)
-min_val = st.sidebar.number_input('Minimum Value', value=0)
-max_val = st.sidebar.number_input('Maximum Value', value=100)
-random_seed = st.sidebar.number_input('Random Seed', value=42)
+# Generate random crop and irrigation values using NumPy
+crop_yield = np.random.randint(50, 100, size=10)  # Crop yields per acre (in bushels)
+irrigation_intervals = np.random.randint(2, 5, size=10)  # Irrigation intervals (in days)
+irrigation_depths = np.random.randint(1, 4, size=10)  # Irrigation application depth (in inches)
 
-# Generate the random data using NumPy
-np.random.seed(random_seed)
-data = np.random.randint(low=min_val, high=max_val, size=(num_rows, num_cols))
+# Calculate the various irrigation metrics
+water_applied = irrigation_depths * 0.623  # Convert inches to millimeters using a conversion factor of 0.623
+crop_production = crop_yield * 25.4  # Convert bushels to millimeters using a conversion factor of 25.4
+wue = crop_production / water_applied  # Water use efficiency
+crop_value = np.random.randint(10, 20, size=10)  # Crop values (in dollars)
+wp = crop_production / (water_applied * crop_value)  # Water productivity
+water_lost = np.random.randint(10, 20, size=10)  # Water lost (in percent)
+irrigation_efficiency = (100 - water_lost) / 100  # Irrigation efficiency
+variable_costs = np.random.randint(500, 1000, size=10)  # Variable costs (in dollars)
+revenue = crop_yield * crop_value  # Revenue (in dollars)
+gross_margin = revenue - variable_costs  # Gross margin (in dollars)
 
-# Convert the NumPy array to a Pandas DataFrame
-df = pd.DataFrame(data, columns=[f'Column {i+1}' for i in range(num_cols)])
-
-# Set up the app layout and display the data
-st.title('Data Manipulation App')
-st.write(f'Generated {num_rows} rows and {num_cols} columns of data:')
-st.write(df)
-
-# Allow the user to manipulate the data using Pandas
-st.markdown('---')
-st.write('Data Manipulation')
-col_select = st.selectbox('Select a Column to Manipulate:', df.columns)
-col_data = df[col_select]
-st.write('Selected Column Data:')
-st.write(col_data)
-
-col_mean = col_data.mean()
-st.write(f'Mean Value: {col_mean}')
-
-col_median = col_data.median()
-st.write(f'Median Value: {col_median}')
-
-st.write('Sorted Column Data:')
-st.write(col_data.sort_values())
-
-st.markdown('---')
-st.write('Data Distribution')
-st.write('Histogram of Selected Column:')
-st.hist(col_data, bins=20)
+# Display the irrigation metrics using Streamlit
+st.write("Crop Yield per Acre:")
+st.write(crop_yield)
+st.write("Water Use Efficiency (WUE):")
+st.write(wue)
+st.write("Water Productivity (WP):")
+st.write(wp)
+st.write("Irrigation Efficiency:")
+st.write(irrigation_efficiency)
+st.write("Gross Margin:")
+st.write(gross_margin)
