@@ -1,54 +1,57 @@
-#Shows the impact of precision agriculture on crop yield and quality, modified V1.0.0 with the existing code 
-# includes visualizations such as line charts or scatter plots. 
 import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
-# Load crop data from CSV file
-csv_url= "https://raw.githubusercontent.com/ElectronicsDr/StreamlitApps/main/crop_data.csv"
-crop_data = pd.read_csv(csv_url)
+CROP_TYPES = {
+    'Wheat': {
+        'kc': 0.85,
+        'yield_coeff': 3.5,
+        'price': 300
+    },
+    'Maize': {
+        'kc': 0.90,
+        'yield_coeff': 4.5,
+        'price': 250
+    },
+    'Soybean': {
+        'kc': 0.80,
+        'yield_coeff': 2.5,
+        'price': 350
+    }
+}
 
-# Set up sidebar for selecting crop
-crop = st.sidebar.selectbox('Select a crop', crop_data['crop'].unique())
+def compute_irrigation_info(crop_type, irrigation_interval, gross_irrigation_depth):
+    crop_params = CROP_TYPES[crop_type]
+    kc = crop_params['kc']
+    yield_coeff = crop_params['yield_coeff']
+    price = crop_params['price']
 
-# Filter data to selected crop
-crop_subset = crop_data[crop_data['crop'] == crop]
+    depth_values = [gross_irrigation_depth / 2, gross_irrigation_depth / 2]
+    interval_values = [irrigation_interval, irrigation_interval]
 
-# Calculate yield mean and standard deviation for selected crop
-yield_mean = crop_subset['yield'].mean()
-yield_std = crop_subset['yield'].std()
+    water_applied = sum(depth_values) * kc
+    yield_per_ha = yield_coeff * water_applied
+    wue = yield_per_ha / sum(depth_values)
+    wp = yield_per_ha / (sum(depth_values) * price)
+    irrigation_efficiency = sum(depth_values) / (sum(depth_values) + water_applied)
 
-# Calculate fertilizer mean and standard deviation for selected crop
-fert_mean = crop_subset['fertilizer'].mean()
-fert_std = crop_subset['fertilizer'].std()
+    gross_margin = yield_per_ha * price
 
-# Generate random yield and fertilizer values based on selected crop
-n_samples = st.slider('Number of samples', 10, 1000, 100)
-yield_samples = np.random.normal(yield_mean, yield_std, size=n_samples)
-fert_samples = np.random.normal(fert_mean, fert_std, size=n_samples)
+    return {
+        'Irrigation Interval (days)': interval_values,
+        'Irrigation Application Depth (mm)': depth_values,
+        'Crop Yield per Acre (kg/ha)': yield_per_ha,
+        'Water Use Efficiency (WUE) in percentage': wue * 100,
+        'Water Productivity (WP)': wp,
+        'Irrigation Efficiency in percentage': irrigation_efficiency * 100,
+        'Gross Margin (Dollars)': gross_margin
+    }
 
-# Display histogram of yield and fertilizer values
-fig, ax = plt.subplots()
-ax.hist(yield_samples)
-ax.set_xlabel('Crop Selected Yields')
-ax.set_ylabel('Frequency')
-st.pyplot(fig)
+st.sidebar.title('Irrigation Yield Metrics Calculator')
 
-fig, ax = plt.subplots()
-ax.hist(fert_samples)
-ax.set_xlabel('Fertilizer Usage')
-ax.set_ylabel('Frequency')
-st.pyplot(fig)
+crop_type = st.sidebar.selectbox('Crop type', list(CROP_TYPES.keys()))
+irrigation_interval = st.sidebar.slider('Irrigation Interval (days)', 1, 30, 7)
+gross_irrigation_depth = st.sidebar.slider('Gross Irrigation Depth (mm)', 100, 500, 250)
 
-# Calculate the correlation between fertilizer and yield
-correlation = crop_subset['yield'].corr(crop_subset['fertilizer'])
+results = compute_irrigation_info(crop_type, irrigation_interval, gross_irrigation_depth)
 
-# Create a line chart to display the relationship between fertilizer and yield
-fig, ax = plt.subplots()
-ax.plot(crop_subset['fertilizer'], crop_subset['yield'], 'o')
-ax.set_xlabel('Fertilizer Usage')
-ax.set_ylabel('Crop Yields')
-ax.set_title('Impact of Fertilizer Usage on Crop Yields')
-ax.text(0.1, 0.9, f'Correlation: {correlation:.2f}', transform=ax.transAxes)
-st.pyplot(fig)
+st.title(f'Irrigation Information for {crop_type}')
+st.write(results)
