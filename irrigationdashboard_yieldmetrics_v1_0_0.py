@@ -60,6 +60,8 @@ yield_chart_data = {"Days": days, "Yield per Acre": yield_per_acre}
 yield_chart_df = pd.DataFrame(yield_chart_data)
 yield_chart = sns.lineplot(data=yield_chart_df, x="Days", y="Yield per Acre", color="green")
 yield_chart.set(xlabel="Days", ylabel="Yield per Acre (bushels)")
+# Display charts
+st.pyplot(yield_chart.figure)
 
 # Add scatter plot for water use efficiency
 st.subheader("Water Use Efficiency (WUE)")
@@ -67,6 +69,8 @@ wue_chart_data = {"Yield per Acre": yield_per_acre, "Water Use": wue}
 wue_chart_df = pd.DataFrame(wue_chart_data)
 wue_chart = sns.scatterplot(data=wue_chart_df, x="Water Use", y="Yield per Acre", color="blue")
 wue_chart.set(xlabel="Water Use (gallons)", ylabel="Yield per Acre (bushels)")
+# Display charts
+st.pyplot(wue_chart.figure)
 
 # Add bar chart for water productivity
 st.subheader("Water Productivity (WP)")
@@ -74,6 +78,8 @@ wp_chart_data = {"Days": days, "Water Productivity": wp}
 wp_chart_df = pd.DataFrame(wp_chart_data)
 wp_chart = sns.barplot(data=wp_chart_df, x="Days", y="Water Productivity", color="purple")
 wp_chart.set(xlabel="Days", ylabel="Water Productivity (bushels/gallon)")
+# Display charts
+st.pyplot(wp_chart.figure)
 
 # Add line chart for irrigation efficiency
 st.subheader("Irrigation Efficiency")
@@ -81,6 +87,8 @@ irrigation_chart_data = {"Days": days, "Irrigation Efficiency": irrigation_effic
 irrigation_chart_df = pd.DataFrame(irrigation_chart_data)
 irrigation_chart = sns.lineplot(data=irrigation_chart_df, x="Days", y="Irrigation Efficiency", color="orange")
 irrigation_chart.set(xlabel="Days", ylabel="Irrigation Efficiency")
+# Display charts
+st.pyplot(irrigation_chart.figure)
 
 # Add line chart for gross margin
 st.subheader("Gross Margin")
@@ -88,11 +96,12 @@ gross_margin_chart_data = {"Days": days, "Gross Margin": gross_margin}
 gross_margin_chart_df = pd.DataFrame(gross_margin_chart_data)
 gross_margin_chart = sns.lineplot(data=gross_margin_chart_df, x="Days", y="Gross Margin", color="red")
 gross_margin_chart.set(xlabel="Days", ylabel="Gross Margin ($)")
-
 # Display charts
-st.pyplot(yield_chart.figure)
-st.pyplot(wue_chart.figure)
-st.pyplot(wp_chart.figure)
-st.pyplot(irrigation_chart.figure)
 st.pyplot(gross_margin_chart.figure)
+
+
+
+
+
+
 
