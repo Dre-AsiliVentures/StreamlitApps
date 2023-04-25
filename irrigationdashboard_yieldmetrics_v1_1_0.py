@@ -9,16 +9,13 @@ CROP_TYPES = {}
 for i, row in crop_details.iterrows():
     crop_name = row['Crop Name']
     kc = row['Kc Ini']
-    CROP_TYPES[crop_name] = {'kc': Kc ini, 'yield_coeff': 3.5, 'price': 300}
+    CROP_TYPES[crop_name] = {'kc': kc, 'yield_coeff': 3.5, 'price': 300}
 
 def compute_irrigation_info(crop_type, irrigation_interval, gross_irrigation_depth):
     crop_params = CROP_TYPES[crop_type]
     kc = crop_params['kc']
-    #yield_coeff = crop_params['yield_coeff']
-    yield_coeff=0.35
     yield_coeff = crop_params['yield_coeff']
-    #price = crop_params['price']
-    price=300
+    price = crop_params['price']
 
     depth_values = [gross_irrigation_depth / 2, gross_irrigation_depth / 2]
     interval_values = [irrigation_interval, irrigation_interval]
@@ -41,7 +38,7 @@ def compute_irrigation_info(crop_type, irrigation_interval, gross_irrigation_dep
         'Gross Margin (Dollars)': gross_margin
     }
 
-st.sidebar.title('Irrigation Demo Calculator')
+st.sidebar.title('Irrigation Calculator')
 
 crop_type = st.sidebar.selectbox('Crop type', list(CROP_TYPES.keys()))
 irrigation_interval = st.sidebar.slider('Irrigation Interval (days)', 1, 30, 7)
