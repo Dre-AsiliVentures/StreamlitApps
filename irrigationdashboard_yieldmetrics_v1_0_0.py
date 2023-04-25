@@ -1,42 +1,60 @@
+# Import necessary packages
 import streamlit as st
+import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
-# Define a dictionary of crops and their yield ranges
-crops = {
-    "Wheat": (2000, 5000),
-    "Corn": (3000, 8000),
-    "Rice": (4000, 10000)
-}
+# Generate random data
+years = np.arange(2010, 2023)
+interval_values = np.random.choice([3, 7, 14, 21], size=len(years))
+depth_values = np.random.randint(50, 200, size=len(years))
+yield_values = np.round(np.random.uniform(1, 4, size=len(years)), decimals=2)
+wue_values = np.round(np.random.uniform(1, 3, size=len(years)), decimals=2)
+wp_values = np.round(np.random.uniform(0.5, 2, size=len(years)), decimals=2)
+efficiency_values = np.round(np.random.uniform(0.5, 1, size=len(years)), decimals=2)
+margin_values = np.round(np.random.uniform(2000, 6000, size=len(years)), decimals=2)
 
-# Define a function to generate random values for the selected crop
-def generate_values(crop):
-    yield_range = crops[crop]
-    crop_yield = np.random.randint(yield_range[0], yield_range[1]+1, size=1)[0]  # kg/ha
-    water_use_efficiency = np.random.uniform(1, 4, size=1)[0]  # kg/m3
-    water_productivity = np.random.randint(2, 10, size=1)[0]  # kg/m3
-    irrigation_efficiency = np.random.uniform(50, 90, size=1)[0]  # %
-    gross_margin = np.random.randint(1000, 5000, size=1)[0]  # USD/ha
-    return crop_yield, water_use_efficiency, water_productivity, irrigation_efficiency, gross_margin
+# Combine data into a Pandas DataFrame
+data = pd.DataFrame({
+    'Year': years,
+    'Irrigation Interval (days)': interval_values,
+    'Irrigation Application Depth (mm)': depth_values,
+    'Crop Yield per Acre': yield_values,
+    'Water Use Efficiency (WUE)': wue_values,
+    'Water Productivity (WP)': wp_values,
+    'Irrigation Efficiency': efficiency_values,
+    'Gross Margin': margin_values
+})
 
-# Set up the Streamlit app
-st.title("Irrigation Dashboard")
-st.header("Select a Crop")
-selected_crop = st.selectbox("Select a crop", list(crops.keys()))
+# Create the dashboard
+st.title('Irrigation Metrics Dashboard')
 
-# Generate the values for the selected crop
-crop_yield, water_use_efficiency, water_productivity, irrigation_efficiency, gross_margin = generate_values(selected_crop)
+# Display the data
+st.write(data)
 
-# Display the selected crop and its generated values
-st.header(selected_crop)
-st.write("- Crop yield (kg/ha)")
-st.write("- Water use efficiency (kg/m3)")
-st.write("- Water productivity (kg/m3)")
-st.write("- Irrigation efficiency (%)")
-st.write("- Gross margin (USD/ha)")
-st.write("")
-st.write("Randomly Generated Values:")
-st.write(f"- Crop yield: {crop_yield} kg/ha")
-st.write(f"- Water use efficiency: {water_use_efficiency:.2f} kg/m3")
-st.write(f"- Water productivity: {water_productivity} kg/m3")
-st.write(f"- Irrigation efficiency: {irrigation_efficiency:.2f}%")
-st.write(f"- Gross margin: {gross_margin} USD/ha")
+# Create a sidebar for filtering the data
+interval = st.sidebar.slider('Select Irrigation Interval (days)', 3, 21, 7, step=1)
+depth = st.sidebar.slider('Select Irrigation Application Depth (mm)', 50, 200, 100, step=10)
+
+# Filter the data based on the selected interval and depth
+filtered_data = data[(data['Irrigation Interval (days)'] == interval) & (data['Irrigation Application Depth (mm)'] == depth)]
+
+# Display the filtered data
+st.write(filtered_data)
+
+# Create a bar chart to display the metrics
+metrics = ['Crop Yield per Acre', 'Water Use Efficiency (WUE)', 'Water Productivity (WP)', 'Irrigation Efficiency', 'Gross Margin']
+selected_metric = st.selectbox('Select a Metric', metrics)
+
+# Filter the data based on the selected metric
+metric_data = filtered_data[['Year', selected_metric]]
+
+# Set the Year column as the index
+metric_data = metric_data.set_index('Year')
+
+# Create a bar chart
+fig, ax = plt.subplots()
+metric_data.plot(kind='bar', ax=ax)
+ax.set_xlabel('Year')
+ax.set_ylabel(selected_metric)
+st.pyplot(fig)
