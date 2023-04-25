@@ -40,7 +40,7 @@ def generate_data(crop_type, irrigation_interval, gross_application_depth):
     return days, yield_per_acre, wue, wp, irrigation_efficiency, gross_margin
 
 # Set page title and layout
-st.set_page_config(page_title="Irrigation Dashboard", page_layout="wide")
+#st.set_page_config(page_title="Irrigation Dashboard", page_layout="wide")
 
 # Add page header
 st.title("Irrigation Dashboard")
