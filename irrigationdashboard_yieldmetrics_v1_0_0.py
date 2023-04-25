@@ -1,46 +1,97 @@
-import numpy as np
 import streamlit as st
-import plotly.graph_objs as go
+import numpy as np
+import seaborn as sns
 
-# Prompt:
-# Use numpy to generate crop, irrigation values. But don't use matplotlib. Then use Streamlit to display these irrigation metrics:
-# - Crop yield per acre
-# - Water use efficiency (WUE)
-# - Water productivity (WP)
-# - Irrigation efficiency
-# - Gross margin
-# The irrigation input values are the irrigation intervals and irrigation application depth.
+# Define constants
+CROP_TYPES = ["Wheat", "Corn", "Soybeans"]
+IRRIGATION_INTERVALS = ["Daily", "Weekly", "Monthly"]
+GROSS_APPLICATION_DEPTHS = ["2 inches", "4 inches", "6 inches"]
 
-# Generate random crop and irrigation values using NumPy
-crop_yield = np.random.randint(50, 100, size=10)  # Crop yields per acre (in bushels)
-irrigation_intervals = st.slider("Irrigation intervals (days)", 1, 10, 5, 1)  # Irrigation intervals (in days)
-irrigation_depths = st.slider("Gross irrigation depth (inches)", 1, 10, 5, 1)  # Irrigation application depth (in inches)
+# Define function to generate data
+def generate_data(crop_type, irrigation_interval, gross_application_depth):
+    # Generate random data using NumPy
+    days = np.arange(1, 366)
+    yield_per_acre = np.random.normal(loc=100, scale=10, size=365)
+    water_use = np.random.normal(loc=10, scale=1, size=365)
+    economic_value = np.random.normal(loc=500, scale=50, size=365)
+    irrigation_efficiency = np.random.normal(loc=0.8, scale=0.1, size=365)
+    gross_margin = np.random.normal(loc=10000, scale=1000, size=365)
 
-# Calculate the various irrigation metrics
-water_applied = irrigation_depths * 0.623  # Convert inches to millimeters using a conversion factor of 0.623
-crop_production = crop_yield * 25.4  # Convert bushels to millimeters using a conversion factor of 25.4
-wue = crop_production / water_applied  # Water use efficiency (in mm/mm)
-crop_value = np.random.randint(10, 20, size=10)  # Crop values (in dollars)
-wp = crop_production / (water_applied * crop_value)  # Water productivity (in mm/mm/$)
-water_lost = np.random.randint(10, 20, size=10)  # Water lost (in percent)
-irrigation_efficiency = (100 - water_lost) / 100  # Irrigation efficiency (dimensionless)
-variable_costs = np.random.randint(500, 1000, size=10)  # Variable costs (in dollars)
-revenue = crop_yield * crop_value  # Revenue (in dollars)
-gross_margin = revenue - variable_costs  # Gross margin (in dollars)
+    # Calculate water use efficiency and water productivity
+    wue = yield_per_acre / water_use
+    wp = yield_per_acre / (water_use * economic_value)
 
-# Create a bar chart to compare the different irrigation metrics
-metrics = ["Crop Yield per Acre (bushels)", "Water Use Efficiency (mm/mm)", "Water Productivity (mm/mm/$)", "Irrigation Efficiency", "Gross Margin ($/acre)"]
-metric_values = [crop_yield.mean(), wue.mean(), wp.mean(), irrigation_efficiency.mean(), gross_margin.mean()]
+    # Filter data based on selected crop type, irrigation interval, and gross application depth
+    if crop_type == "Wheat":
+        yield_per_acre = yield_per_acre * 1.2
+    elif crop_type == "Soybeans":
+        yield_per_acre = yield_per_acre * 0.8
 
-fig = go.Figure(data=[go.Bar(x=metrics, y=metric_values)])
-fig.update_layout(title="Irrigation Metrics Comparison", xaxis_title="Metric", yaxis_title="Value")
+    if irrigation_interval == "Weekly":
+        water_use = water_use * 7
+    elif irrigation_interval == "Monthly":
+        water_use = water_use * 30
 
-# Display the irrigation metrics and the bar chart using Streamlit
-st.write("Irrigation Metrics:")
-st.write("Crop Yield per Acre (bushels/acre):", crop_yield)
-st.write("Water Use Efficiency (mm/mm):", wue)
-st.write("Water Productivity (mm/mm/$):", wp)
-st.write("Irrigation Efficiency (dimensionless):", irrigation_efficiency)
-st.write("Gross Margin ($/acre):", gross_margin)
+    if gross_application_depth == "4 inches":
+        gross_margin = gross_margin * 0.9
+    elif gross_application_depth == "6 inches":
+        gross_margin = gross_margin * 1.1
 
-st.plotly_chart(fig)
+    return days, yield_per_acre, wue, wp, irrigation_efficiency, gross_margin
+
+# Set page title and layout
+st.set_page_config(page_title="Irrigation Dashboard", page_layout="wide")
+
+# Add page header
+st.title("Irrigation Dashboard")
+
+# Add sliders for selecting crop type, irrigation interval, and gross application depth
+crop_type = st.select_slider("Select Crop Type", options=CROP_TYPES)
+irrigation_interval = st.select_slider("Select Irrigation Interval", options=IRRIGATION_INTERVALS)
+gross_application_depth = st.select_slider("Select Gross Application Depth", options=GROSS_APPLICATION_DEPTHS)
+
+# Generate data based on selected sliders
+days, yield_per_acre, wue, wp, irrigation_efficiency, gross_margin = generate_data(crop_type, irrigation_interval, gross_application_depth)
+
+# Add line chart for yield per acre
+st.subheader("Crop Yield per Acre")
+yield_chart_data = {"Days": days, "Yield per Acre": yield_per_acre}
+yield_chart_df = pd.DataFrame(yield_chart_data)
+yield_chart = sns.lineplot(data=yield_chart_df, x="Days", y="Yield per Acre", color="green")
+yield_chart.set(xlabel="Days", ylabel="Yield per Acre (bushels)")
+
+# Add scatter plot for water use efficiency
+st.subheader("Water Use Efficiency (WUE)")
+wue_chart_data = {"Yield per Acre": yield_per_acre, "Water Use": water}
+wue_chart_df = pd.DataFrame(wue_chart_data)
+wue_chart = sns.scatterplot(data=wue_chart_df, x="Water Use", y="Yield per Acre", color="blue")
+wue_chart.set(xlabel="Water Use (gallons)", ylabel="Yield per Acre (bushels)")
+
+# Add bar chart for water productivity
+st.subheader("Water Productivity (WP)")
+wp_chart_data = {"Days": days, "Water Productivity": wp}
+wp_chart_df = pd.DataFrame(wp_chart_data)
+wp_chart = sns.barplot(data=wp_chart_df, x="Days", y="Water Productivity", color="purple")
+wp_chart.set(xlabel="Days", ylabel="Water Productivity (bushels/gallon)")
+
+# Add line chart for irrigation efficiency
+st.subheader("Irrigation Efficiency")
+irrigation_chart_data = {"Days": days, "Irrigation Efficiency": irrigation_efficiency}
+irrigation_chart_df = pd.DataFrame(irrigation_chart_data)
+irrigation_chart = sns.lineplot(data=irrigation_chart_df, x="Days", y="Irrigation Efficiency", color="orange")
+irrigation_chart.set(xlabel="Days", ylabel="Irrigation Efficiency")
+
+# Add line chart for gross margin
+st.subheader("Gross Margin")
+gross_margin_chart_data = {"Days": days, "Gross Margin": gross_margin}
+gross_margin_chart_df = pd.DataFrame(gross_margin_chart_data)
+gross_margin_chart = sns.lineplot(data=gross_margin_chart_df, x="Days", y="Gross Margin", color="red")
+gross_margin_chart.set(xlabel="Days", ylabel="Gross Margin ($)")
+
+# Display charts
+st.pyplot(yield_chart.figure)
+st.pyplot(wue_chart.figure)
+st.pyplot(wp_chart.figure)
+st.pyplot(irrigation_chart.figure)
+st.pyplot(gross_margin_chart.figure)
+
