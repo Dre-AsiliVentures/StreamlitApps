@@ -14,8 +14,10 @@ for i, row in crop_details.iterrows():
 def compute_irrigation_info(crop_type, irrigation_interval, gross_irrigation_depth):
     crop_params = CROP_TYPES[crop_type]
     kc = crop_params['kc']
-    yield_coeff = crop_params['yield_coeff']
-    price = crop_params['price']
+    #yield_coeff = crop_params['yield_coeff']
+    yield_coeff=0.35
+    #price = crop_params['price']
+    price=300
 
     depth_values = [gross_irrigation_depth / 2, gross_irrigation_depth / 2]
     interval_values = [irrigation_interval, irrigation_interval]
