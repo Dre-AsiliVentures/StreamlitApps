@@ -63,7 +63,7 @@ yield_chart.set(xlabel="Days", ylabel="Yield per Acre (bushels)")
 
 # Add scatter plot for water use efficiency
 st.subheader("Water Use Efficiency (WUE)")
-wue_chart_data = {"Yield per Acre": yield_per_acre, "Water Use": water}
+wue_chart_data = {"Yield per Acre": yield_per_acre, "Water Use": wue}
 wue_chart_df = pd.DataFrame(wue_chart_data)
 wue_chart = sns.scatterplot(data=wue_chart_df, x="Water Use", y="Yield per Acre", color="blue")
 wue_chart.set(xlabel="Water Use (gallons)", ylabel="Yield per Acre (bushels)")
