@@ -1,3 +1,8 @@
+""" Seed Rate converter.py
+Seed rate refers to the amount of seeds used/needed to plant a specific area of land
+
+This converter application convers the seed rate from seed Rate/ha to Seed Rate/acre and vice versa
+"""
 import streamlit as st
 
 # Conversion functions
