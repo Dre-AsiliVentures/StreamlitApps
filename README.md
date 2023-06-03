@@ -1,4 +1,4 @@
 # StreamlitApps
 This is one of the interesting Analytics
 
-Seed Rate Converter (seedrateconverter.py) allows the conversion of seedrate/ha to seedrate/acre and vice-versa.
+1.Seed Rate Converter (seedrateconverter.py) allows the conversion of seed in kg/ha to seed in kg/acre and vice-versa. Seed rate refers to the amount of seeds used/needed to plant a specific area of land. 
